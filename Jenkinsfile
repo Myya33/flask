@@ -2,7 +2,7 @@ pipeline {
   environment{
     registry = 'myya33/flask_app'
     registryCredentials = 'docker'
-    cluster_name = skillstorm
+    cluster_name = 'skillstorm'
   }
   agent {
     node {
