@@ -16,14 +16,14 @@ pipeline {
         git(url: 'https://github.com/Myya33/flask2.git', branch: 'main')
       }
     }
-  stage(Build Stage) {
+  stage('Build Stage') {
       steps {
         script {
           dockerImage = docker.build(registry)
         }
       }
   }
-  stage(Deploy Stage) {
+  stage('Deploy Stage') {
       steps {
         script {
           docker.withRegistry('', registryCredentials) {
