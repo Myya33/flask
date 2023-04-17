@@ -1,4 +1,9 @@
 pipeline {
+  environment{
+    registry = 'myya33/flasp_app'
+    registryCredentials = 'docker'
+    cluster_name = skillstorm
+  }
   agent {
     node {
       label 'docker'
@@ -11,24 +16,21 @@ pipeline {
         git(url: 'https://github.com/Myya33/flask.git', branch: 'main')
       }
     }
-
-    stage('Build') {
+  stage(Build Stage) {
       steps {
-        sh 'docker build -t myya33/flask_app .'
+        script {
+          dockerImage = docker.build(registry)
+        }
+      }
+  }
+  stage(Deploy Stage) {
+      steps {
+        script {
+          docker.withRegistry('', registryCredentials) {
+                dockerImage.push()
+          }
+        }
       }
     }
-
-    stage('Docker Login') {
-      steps {
-        sh 'docker login -u myya33 -p dckr_pat_3IsZ-C6m-WedZX3TTXKMjp1bydY'
-      }
-    }
-
-    stage('Docker Psuh') {
-      steps {
-        sh 'docker push myya33/flask_app'
-      }
-    }
-
   }
 }
