@@ -1,6 +1,6 @@
 pipeline {
   environment{
-    registry = 'myya33/flasp_app'
+    registry = 'myya33/flask_app'
     registryCredentials = 'docker'
     cluster_name = skillstorm
   }
