@@ -33,10 +33,10 @@ pipeline {
         }
       }
     }
-stage('Kubernetes')
+stage('Kubernetes') {
   steps {
     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId:
-    'AWS_SECRET_ACCESS_KEY')]) {
+    'AWS', secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
       sh "aws eks update-kubeconfig --region us-east-1 --name ${cluster_name}"
       script
         try{
@@ -49,4 +49,5 @@ stage('Kubernetes')
         sh "kubectl -n ${namespace} rollout restart deployment flaskcontainer"
         }
     }
+  }
 }
