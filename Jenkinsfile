@@ -37,7 +37,7 @@ stage('Kubernetes') {
   steps {
     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId:'AWS', secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
       sh "aws eks update-kubeconfig --region us-east-1 --name ${cluster_name}"
-      script
+      script{
         try{
           sh "kubectl create namespace ${namespace}"
         }catch (Exception e) {
@@ -48,5 +48,6 @@ stage('Kubernetes') {
         sh "kubectl -n ${namespace} rollout restart deployment flaskcontainer"
         }
     }
+  }
   }
 }
