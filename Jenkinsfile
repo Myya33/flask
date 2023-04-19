@@ -1,10 +1,11 @@
+
 pipeline {
-  environment{
-    registry = 'myya33/flask_app'
-    registryCredentials = 'docker'
-    cluster_name = 'skillstorm'
-    namespace = 'mjbjenkins'
-  }
+    environment {
+        registry = 'myya33/flask_app'
+        registryCredentials = 'docker'
+        cluster_name = 'skillstorm'
+        namespace = 'mjbjenkins'
+    }
   agent {
     node {
       label 'docker'
@@ -17,37 +18,37 @@ pipeline {
         git(url: 'https://github.com/Myya33/flask2.git', branch: 'main')
       }
     }
-  stage('Build Stage') {
-      steps {
+stage('Build Stage') {
+    steps {
         script {
-          dockerImage = docker.build(registry)
-        }
-      }
-  }
-  stage('Deploy Stage') {
-      steps {
-        script {
-          docker.withRegistry('', registryCredentials) {
-                dockerImage.push()
-          }
+            dockerImage = docker.build(registry)
         }
       }
     }
+stage('Deploy Stage') {
+    steps {
+        script {
+           docker.withRegistry('', registryCredentials) {
+                dockerImage.push()
+            }
+          }
+        }
+      }
 stage('Kubernetes') {
   steps {
-    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId:'aws', secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
+    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'AWS', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
       sh "aws eks update-kubeconfig --region us-east-1 --name ${cluster_name}"
       script{
         try{
           sh "kubectl create namespace ${namespace}"
         }catch (Exception e) {
-          echo "Exception handled"
+            echo "Exception handled"
         }
-      }
+        }
         sh "kubectl apply -f deployment.yaml -n ${namespace}"
         sh "kubectl -n ${namespace} rollout restart deployment flaskcontainer"
         }
+      }
     }
-  }
   }
 }
